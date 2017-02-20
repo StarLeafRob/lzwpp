@@ -1,0 +1,4 @@
+bazel-*
+.project
+.cproject
+.settings
