@@ -1,7 +1,10 @@
 cc_binary(
-	name = "lzw_test",
-	srcs = ["main.cpp"],
+	name = "lzw_decompressor",
+	srcs = ["decompressor.cpp"],
 	deps = [
-		"//lib:lzw_lib"
+		"//lib:lib_lzw"
 	],
+	copts = [
+		"-std=c++14"
+	]
 )

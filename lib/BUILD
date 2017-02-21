@@ -1,6 +1,8 @@
 cc_library(
-	name = "lzw_lib",
-	srcs = ["lzw.cpp"],
-	hdrs = ["lzw.hpp"],
+	name = "lib_lzw",
+	srcs = ["decompress.cpp"],
+	hdrs = [
+		"decompress.hpp"
+	],
 	visibility = ["//main:__pkg__"],
 )

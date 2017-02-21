@@ -2,3 +2,4 @@ bazel-*
 .project
 .cproject
 .settings
+test_data
