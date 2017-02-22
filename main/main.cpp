@@ -2,10 +2,10 @@
  *      Author: rdt
  */
 
-#include "lib/decompress.hpp"
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include "lib/iostream_impl.hpp"
 
 using namespace std;
 
@@ -14,8 +14,7 @@ int main (int argc, char* argv[]) {
         std::cout << "usage = lzw_decompressor <input> <output>" << std::endl;
         return 1;
     }
-    auto result = lzw::decompress(argv[1], argv[2]);
-    if (result != lzw::Result::SUCCESS) {
+    if (not lzw::decompress(argv[1], argv[2])) {
         std::cout << "failed" << std::endl;
         return 1;
     }

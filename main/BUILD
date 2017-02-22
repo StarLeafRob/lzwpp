@@ -1,6 +1,6 @@
 cc_binary(
 	name = "lzw_decompressor",
-	srcs = ["decompressor.cpp"],
+	srcs = ["main.cpp"],
 	deps = [
 		"//lib:lib_lzw"
 	],

@@ -2,4 +2,4 @@ bazel-*
 .project
 .cproject
 .settings
-test_data
+test_data/huge
