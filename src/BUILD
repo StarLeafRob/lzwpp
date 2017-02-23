@@ -1,9 +1,9 @@
 cc_library(
-	name = "lib_lzw",
+	name = "lzw_iostream_lib",
 	srcs = ["iostream_impl.cpp"],
 	hdrs = [
 		"decoder.hpp",
 		"iostream_impl.hpp"
 	],
-	visibility = ["//main:__pkg__"],
+	visibility = ["//main:__pkg__", "//test:__pkg__"],
 )

@@ -3,3 +3,4 @@ bazel-*
 .cproject
 .settings
 test_data/huge
+test_data/tmp-*

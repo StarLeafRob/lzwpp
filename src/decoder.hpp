@@ -29,10 +29,10 @@ namespace lzw {
         static constexpr size_t dict_size = (1 << 12) - 256;
 
         Output& output_;
-        std::array<uint8_t, 1 << 12> buffer_;
-        std::array<entry, dict_size> dict_;
         int16_t next_entry_ {0};
         int16_t previous_code_ = -1;
+        std::array<uint8_t, 1 << 12> buffer_;
+        std::array<entry, dict_size> dict_;
     };
 
     template <typename Output>

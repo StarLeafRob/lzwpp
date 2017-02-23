@@ -5,7 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
-#include "lib/iostream_impl.hpp"
+
+#include "src/iostream_impl.hpp"
 
 using namespace std;
 
@@ -14,7 +15,7 @@ int main (int argc, char* argv[]) {
         std::cout << "usage = lzw_decompressor <input> <output>" << std::endl;
         return 1;
     }
-    if (not lzw::decompress(argv[1], argv[2])) {
+    if (not lzw::iostream::decompress(argv[1], argv[2])) {
         std::cout << "failed" << std::endl;
         return 1;
     }

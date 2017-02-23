@@ -1,10 +1,7 @@
 cc_binary(
-	name = "lzw_decompressor",
-	srcs = ["main.cpp"],
+	name = "lzw_iostream",
+	srcs = ["lzw_iostream.cpp"],
 	deps = [
-		"//lib:lib_lzw"
-	],
-	copts = [
-		"-std=c++14"
+		"//src:lzw_iostream_lib"
 	]
 )
