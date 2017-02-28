@@ -6,7 +6,7 @@
 #include <fstream>
 #include <chrono>
 
-#include "src/iostream_impl.hpp"
+#include "src/decompress.hpp"
 
 using namespace std;
 

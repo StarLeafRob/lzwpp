@@ -10,7 +10,8 @@
 #include <cstdio>
 #include <string.h>
 #include <unistd.h>
-#include "src/iostream_impl.hpp"
+
+#include "../src/decompress.hpp"
 
 using namespace std;
 using namespace lzw::iostream;

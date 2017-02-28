@@ -2,8 +2,8 @@
  *      Author: rdt
  */
 
-#include "src/iostream_impl.hpp"
 #include "src/decoder.hpp"
+#include "src/decompress.hpp"
 
 #include <array>
 #include <memory>
@@ -85,14 +85,8 @@ namespace lzw { namespace iostream {
         Writer writer(output);
         if (not input or not output)
             throw std::runtime_error("invalid files");
-        bool result = true;
-        try {
-            decompress_loop(input, writer);
-            writer.flush();
-        }
-        catch(std::exception& e) {
-            result = false;
-        }
+        bool result = decompress_loop(input, writer);
+        writer.flush();
         input.close();
         output.close();
         return result;

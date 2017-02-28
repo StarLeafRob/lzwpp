@@ -3,6 +3,6 @@ cc_binary(
 	srcs = ["iostream_test.cpp"],
 	copts = [],
 	deps = [
-		"//src:lzw_iostream_lib"
+		"//src:decompress_lib"
 	]
 )
