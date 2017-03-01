@@ -2,6 +2,8 @@
  *      Author: rdt
  */
 
+#include "src/decompress.hpp"
+
 #include <chrono>
 #include <iostream>
 #include <fstream>
@@ -10,11 +12,10 @@
 #include <cstdio>
 #include <string.h>
 #include <unistd.h>
-
-#include "../src/decompress.hpp"
+#include <fcntl.h>
 
 using namespace std;
-using namespace lzw::iostream;
+using namespace lzw;
 
 using chrono::duration_cast;
 using chrono::milliseconds;
@@ -41,7 +42,19 @@ int main(int argc, char* argv[]) {
         const std::string input = test_path + test;
         const std::string output = test_path + "test-de" + test;
         auto t_start = chrono::steady_clock::now();
-        decompress(input.c_str(), output.c_str());
+
+        int input_fd = open(input.c_str(), O_RDONLY);
+        int output_fd = open(output.c_str(), O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+
+        if (input_fd == -1)
+            throw std::runtime_error("failed to open test compressed files");
+        if (output_fd == -1)
+            throw std::runtime_error("failed to open temp output file");
+
+        bool success = decompress(input_fd, output_fd);
+        if (not success)
+            throw std::runtime_error("failed to decompress");
+
         auto t_end = chrono::steady_clock::now();
         cout << test << " took " << duration_cast<milliseconds>(t_end - t_start).count() << " ms" << endl;
         const std::string reference_file = test_path + "de" + test;

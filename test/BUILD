@@ -1,6 +1,6 @@
 cc_binary(
-	name = "iostream_test",
-	srcs = ["iostream_test.cpp"],
+	name = "lzw_test",
+	srcs = ["test.cpp"],
 	copts = [],
 	deps = [
 		"//src:decompress_lib"

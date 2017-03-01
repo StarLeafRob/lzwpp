@@ -7,7 +7,6 @@
 #include <array>
 #include <stdint.h>
 #include <assert.h>
-#include <iostream>
 
 namespace lzw {
 
@@ -52,7 +51,6 @@ namespace lzw {
                 // code not in dictionary yet.
                 // output previous code, output first letter of previous code, add combined to dict
                 first = output_code(previous_code_);
-                assert((first >= 0 and 256 > first));
                 output_.put(char(first));
             }
             else {

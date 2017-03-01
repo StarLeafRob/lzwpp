@@ -3,11 +3,9 @@
  */
 
 #pragma once
-#include <string>
-#include <iosfwd>
 
-namespace lzw { namespace iostream {
+namespace lzw {
 
-    bool decompress(const char* input, const char* output);
+    bool decompress(const int in_fd, const int out_fd);
 
-}}
+}
