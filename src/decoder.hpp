@@ -27,13 +27,13 @@ namespace lzw {
             uint8_t value;
         };
 
-        static constexpr size_t max_code = (1 << 12) - 257;
+        static constexpr size_t dict_size = (1 << 12) - 257;
 
         Output& output_;
         int16_t next_entry_ {0};
         int16_t previous_code_ = -1;
-        std::array<uint8_t, max_code> buffer_;
-        std::array<entry, max_code> dict_;
+        std::array<uint8_t, dict_size> buffer_;
+        std::array<entry, dict_size> dict_;
     };
 
     template <typename Output>
@@ -62,7 +62,7 @@ namespace lzw {
             dict_[next_entry_].prev = previous_code_;
             previous_code_ = code;
             next_entry_ += 1;
-            if (next_entry_ == max_code) {
+            if (next_entry_ == dict_size) {
                 next_entry_ = 0;
                 previous_code_ = -1;
             }

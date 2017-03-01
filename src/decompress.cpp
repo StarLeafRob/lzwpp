@@ -16,8 +16,6 @@ namespace lzw { namespace iostream {
 
     using namespace std;
 
-    constexpr size_t buf_size = 4096 * 3;
-
     class Writer {
     public:
         Writer(fstream& out)
@@ -52,9 +50,11 @@ namespace lzw { namespace iostream {
         size_t bytes_;
     };
 
+    constexpr size_t read_buf_size = 4096 * 3;
+
     bool decompress_loop(fstream& in, Writer& writer) {
         uint8_t a, b, c;
-        array<uint8_t, buf_size> buffer;
+        array<uint8_t, read_buf_size> buffer;
         Decoder<Writer> codec(writer);
         while(in) {
             in.read((char*)buffer.data(), buffer.size());
