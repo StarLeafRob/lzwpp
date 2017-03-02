@@ -1,9 +1,12 @@
 cc_library(
 	name = "decompress_lib",
-	srcs = ["decompress.cpp"],
+	srcs = [
+		"decompress.cpp",
+		"impl.cpp"
+	],
 	hdrs = [
-		"decoder.hpp",
-		"decompress.hpp"
+		"decompress.hpp",
+		"impl.hpp"
 	],
 	visibility = ["//main:__pkg__", "//test:__pkg__"],
 )

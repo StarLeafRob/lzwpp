@@ -50,11 +50,12 @@ int main(int argc, char* argv[]) {
             throw std::runtime_error("failed to open test compressed files");
         if (output_fd == -1)
             throw std::runtime_error("failed to open temp output file");
-
-        bool success = decompress(input_fd, output_fd);
-        if (not success)
-            throw std::runtime_error("failed to decompress");
-
+        try {
+            decompress(input_fd, output_fd);
+        } catch (std::exception& e) {
+            cout << "failed due to exception: " << e.what() << endl;
+            throw;
+        }
         auto t_end = chrono::steady_clock::now();
         cout << test << " took " << duration_cast<milliseconds>(t_end - t_start).count() << " ms" << endl;
         const std::string reference_file = test_path + "de" + test;

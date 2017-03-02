@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <cstdio>
+#include <exception>
 
 using namespace std;
 
@@ -36,12 +37,16 @@ int main (int argc, char* argv[]) {
 
         return 1;
     }
-    bool success = lzw::decompress(input_fd, output_fd);
+    int result = 0;
+    try {
+        lzw::decompress(input_fd, output_fd);
+    } catch(exception& e) {
+        fprintf(stderr, "decompress failed due to exception %s", e.what());
+        result = 1;
+    }
     if (input_fd > STDERR_FILENO)
         close(input_fd);
     if (output_fd > STDERR_FILENO)
         close(output_fd);
-    if (not success)
-        fprintf(stderr, "decompressing failed\n");
-    return success ? 0 : 1;
+    return result;
 }
