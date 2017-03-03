@@ -2,51 +2,47 @@
  *      Author: rdt
  */
 
-#include "src/decompress.hpp"
-#include <unistd.h>
-#include <fcntl.h>
-#include <cstdio>
+#include "src/impl.hpp"
+#include <fstream>
+#include <iostream>
 #include <exception>
 
 using namespace std;
+using namespace lzw;
 
 int main (int argc, char* argv[]) {
-
-    int input_fd = 0;
-    int output_fd = 0;
-
+    std::istream* in;
+    std::ostream* out;
+    std::fstream fin;
+    std::fstream fout;
     if (argc == 1) {
-        input_fd = STDIN_FILENO;
-        output_fd = STDOUT_FILENO;
-    } else if (argc == 3) {
-        input_fd = open(argv[1], O_RDONLY);
-        output_fd = open(argv[2], O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-
-        if (input_fd == -1) {
-            fprintf(stderr, "invalid input filename: %s\n", argv[1]);
-            return 1;
-        }
-        if (output_fd == -1) {
-            fprintf(stderr, "invalid output filename: %s\n", argv[2]);
-            return 1;
-        }
-    } else {
-        fprintf(stderr, "--------help---------\n"
-                "./program <> to use stdin and stdout\n OR \n"
-                "./program <input_file> <output_file>\n");
+        in = &std::cin;
+        out = &std::cout;
+    }
+    else if (argc == 3) {
+        fin.open(argv[1], ios_base::binary | ios_base::in);
+        if (not fin)
+            std::cerr << "invalid input filename " << argv[1] << std::endl;
+        fout.open(argv[2], ios_base::binary | ios_base::out);
+        if (not fout)
+            std::cerr << "invalid output filename " << argv[1] << std::endl;
+        in = &fin;
+        out = &fout;
+    }
+    else {
+        std::cerr << "--------help---------" << std::endl
+                  << "./program <> to use stdin and stdout" << std::endl
+                  << " OR " << std::endl
+                  << "./program <input_file> <output_file>" << std::endl;
 
         return 1;
     }
-    int result = 0;
     try {
-        lzw::decompress(input_fd, output_fd);
-    } catch(exception& e) {
-        fprintf(stderr, "decompress failed due to exception %s", e.what());
-        result = 1;
+        decompress(*in, *out);
+    } catch(std::exception& e) {
+        std::cerr << "failed due to exception: " << e.what() << std::endl;
     }
-    if (input_fd > STDERR_FILENO)
-        close(input_fd);
-    if (output_fd > STDERR_FILENO)
-        close(output_fd);
-    return result;
+    fin.close();
+    fout.close();
+    return 0;
 }

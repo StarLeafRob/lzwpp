@@ -6,14 +6,12 @@
 #include <array>
 #include <stdint.h>
 #include <string.h>
-#include <assert.h>
-#include <fcntl.h>
-#include <unistd.h>
+#include <iostream>
 
 namespace lzw {
 
-    Writer::Writer(const int out_fd)
-        : out_fd_(out_fd)
+    Writer::Writer(std::ostream& out)
+        : out_(out)
         , bytes_(0)
     {}
 
@@ -34,20 +32,13 @@ namespace lzw {
             write(data + t, sz - t);
     }
     void Writer::flush() {
-        size_t t;
-        char* pos = buffer_.data();
-        while(bytes_ != 0) {
-            t = ::write(out_fd_, pos, bytes_);
-            if (t < 0)
-                throw std::runtime_error("write syscall returned error");
-            bytes_ -= t;
-            pos += t;
-        }
+        out_.write(buffer_.data(), bytes_);
+        bytes_ = 0;
     }
 
-    Decompressor::Decompressor(int in_fd, int out_fd)
-        : input_fd_(in_fd)
-        , writer_(out_fd)
+    Decompressor::Decompressor(std::istream& in, std::ostream& out)
+        : in_(in)
+        , writer_(out)
         , next_entry_(0)
         , dict_()
     {
@@ -95,18 +86,13 @@ namespace lzw {
         uint8_t* pos;
         uint8_t* end;
         size_t bytes;
-        bool eof = false;
-        while (not eof) {
-            bytes = read(input_fd_, raw.data(), raw.size());
-            if (bytes < 0) {
-                throw std::runtime_error("read syscall returned error");
-            } else if (bytes != raw.size()) {
-                eof = true;
-            }
+        while (in_) {
+            in_.read((char*)raw.data(), raw.size());
+            bytes = in_.gcount();
             pos = raw.begin();
             end = raw.begin() + bytes;
             for(; pos < end; pos += 3) {
-                if (pos + 2 == end and eof) {
+                if (pos + 2 == end and in_.eof()) {
                     decode((pos[0] << 8) + (pos[1]));
                     break;
                 }
