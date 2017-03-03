@@ -48,52 +48,46 @@ namespace lzw {
     Decompressor::Decompressor(int in_fd, int out_fd)
         : input_fd_(in_fd)
         , writer_(out_fd)
-    {}
+        , next_entry_(0)
+        , dict_()
+    {
+    }
 
-    void Decompressor::decode(const int16_t code) {
-        if (previous_code_ != -1) {
-            int16_t first;
-            auto next_offset = next_entry_ + 256;
-            if (code > next_offset)
+    void Decompressor::decode(const int code) {
+        if (not previous_.empty()) {
+            int shifted = code - 256;
+            if (shifted > next_entry_) {
                 throw std::runtime_error("corrupt input");
-            else if (code == next_offset) {
+            }
+            else if (shifted == next_entry_ ) {
                 // code not in dictionary yet.
                 // output previous code, output first letter of previous code, add combined to dict
-                first = output_code(previous_code_);
-                writer_.put(char(first));
+                previous_.push_back(previous_[0]);
+                dict_[next_entry_++] = previous_;
+                writer_.write((char*)previous_.data(), previous_.size());
             }
             else {
-                first = output_code(code);
+                dict_[next_entry_] = previous_;
+                if (code < 256) {
+                    dict_[next_entry_++].push_back(code);
+                    writer_.put(char(code));
+                    previous_.clear();
+                    previous_.push_back(char(code));
+                } else {
+                    dict_[next_entry_++].push_back(dict_[shifted][0]);
+                    previous_ = dict_[shifted];
+                    writer_.write((char*)previous_.data(), previous_.size());
+                }
             }
-            dict_[next_entry_].value = first;
-            dict_[next_entry_].prev = previous_code_;
-            previous_code_ = code;
-            next_entry_ += 1;
             if (next_entry_ == dict_size) {
                 next_entry_ = 0;
-                previous_code_ = -1;
+                previous_.clear();
             }
         }
         else {
             writer_.put(char(code));
-            previous_code_ = code;
+            previous_.push_back(code);
         }
-    }
-
-    int16_t Decompressor::output_code(const int16_t code) {
-        auto copy = code;
-        auto pos = buffer_.rbegin();
-        while (copy > 255) {
-            const auto& entry = dict_[copy - 256];
-            *pos = entry.value;
-            copy = entry.prev;
-            pos++;
-        }
-        *pos = uint8_t(copy);
-        uint8_t* start = &(*pos);
-        size_t bytes = std::distance(start, buffer_.data() + buffer_.size());
-        writer_.write((char*)start, bytes);
-        return copy;
     }
 
     void Decompressor::run() {
